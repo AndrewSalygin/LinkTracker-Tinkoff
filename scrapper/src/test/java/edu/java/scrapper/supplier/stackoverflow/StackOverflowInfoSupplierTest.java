@@ -2,14 +2,15 @@ package edu.java.scrapper.supplier.stackoverflow;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.configuration.supplier.GithubConfig;
-import edu.java.configuration.supplier.GithubPatternConfig;
+import edu.java.RetryElement;
+import edu.java.RetryQueryConfiguration;
 import edu.java.configuration.supplier.StackOverflowConfig;
 import edu.java.configuration.supplier.StackOverflowPatternConfig;
 import edu.java.supplier.api.LinkInfo;
-import edu.java.supplier.github.GithubInfoSupplier;
 import edu.java.supplier.stackoverflow.StackOverflowInfoSupplier;
 import java.net.URI;
+import java.time.Duration;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,6 +23,19 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 public class StackOverflowInfoSupplierTest {
     private static WireMockServer server;
+
+    private static final RetryQueryConfiguration RETRY_QUERY_CONFIGURATION = new RetryQueryConfiguration(
+        List.of(new RetryElement(
+                "stackoverflow",
+                "fixed",
+                1,
+                1,
+                Duration.ofSeconds(1),
+                null,
+                List.of(429)
+            )
+        )
+    );
 
     @BeforeAll
     public static void setUp() {
@@ -53,7 +67,7 @@ public class StackOverflowInfoSupplierTest {
         Mockito.when(stackOverflowPatternConfig.questions()).thenReturn("https://stackoverflow.com/questions/(\\d+).*");
         StackOverflowConfig config = new StackOverflowConfig(server.baseUrl(), stackOverflowPatternConfig);
 
-        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config, new ObjectMapper());
+        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config, new ObjectMapper(), RETRY_QUERY_CONFIGURATION);
         LinkInfo info = supplier.fetchInfo(
             new URI(
                 "https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL()
@@ -74,23 +88,9 @@ public class StackOverflowInfoSupplierTest {
         Mockito.when(stackOverflowPatternConfig.questions()).thenReturn("https://stackoverflow.com/wrongUrl/(\\d+).*");
         StackOverflowConfig config = new StackOverflowConfig(server.baseUrl(), stackOverflowPatternConfig);
 
-        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config, new ObjectMapper());
+        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config, new ObjectMapper(), RETRY_QUERY_CONFIGURATION);
         LinkInfo info = supplier.fetchInfo(
             new URI("https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL()
-        );
-        Assertions.assertThat(info).isNull();
-    }
-
-    @SneakyThrows
-    @Test
-    public void returnNullInformationWithWrongUrlTest() {
-        GithubPatternConfig githubPatternConfig = Mockito.mock(GithubPatternConfig.class);
-        Mockito.when(githubPatternConfig.repository()).thenReturn("https://github.com/(.+)/(.+)");
-        GithubConfig config = new GithubConfig(server.baseUrl(), githubPatternConfig);
-
-        GithubInfoSupplier supplier = new GithubInfoSupplier(config);
-        LinkInfo info = supplier.fetchInfo(
-            new URI("https://github.com/AndrewSalygin/test").toURL()
         );
         Assertions.assertThat(info).isNull();
     }

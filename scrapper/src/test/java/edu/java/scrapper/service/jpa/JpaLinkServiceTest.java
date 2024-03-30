@@ -1,38 +1,29 @@
 package edu.java.scrapper.service.jpa;
 
-import edu.java.domain.jpa.entity.LinkEntity;
-import edu.java.domain.jpa.entity.TgChatEntity;
 import edu.java.dto.Chat;
-import edu.java.dto.Link;
 import edu.java.dto.response.ListChatsResponse;
 import edu.java.exception.LinkNotFoundException;
-import edu.java.repository.jdbc.JdbcChatLinkRepository;
-import edu.java.repository.jdbc.JdbcChatRepository;
-import edu.java.repository.jdbc.JdbcLinkRepository;
 import edu.java.repository.jpa.JpaChatRepository;
 import edu.java.repository.jpa.JpaLinkRepository;
 import edu.java.scrapper.IntegrationEnvironment;
-import edu.java.service.LinkService;
 import edu.java.service.TelegramChatService;
 import edu.java.service.jpa.JpaLinkService;
 import edu.java.supplier.InfoSuppliers;
 import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.github.GithubInfoSupplier;
 import edu.java.util.URLCreator;
-import jakarta.persistence.EntityManager;
+import java.net.URL;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import java.net.URL;
-import java.util.List;
 
 @SpringBootTest
 public class JpaLinkServiceTest extends IntegrationEnvironment {

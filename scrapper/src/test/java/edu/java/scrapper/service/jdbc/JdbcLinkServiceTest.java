@@ -14,7 +14,6 @@ import edu.java.supplier.InfoSuppliers;
 import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.github.GithubInfoSupplier;
 import edu.java.util.URLCreator;
-import java.net.URI;
 import java.net.URL;
 import java.time.OffsetDateTime;
 import java.util.List;
