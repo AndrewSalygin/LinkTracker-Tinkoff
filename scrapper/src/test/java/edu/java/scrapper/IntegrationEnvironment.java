@@ -15,6 +15,7 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.File;
+import java.nio.file.Path;
 
 @Testcontainers
 public abstract class IntegrationEnvironment {
@@ -33,10 +34,16 @@ public abstract class IntegrationEnvironment {
     @SneakyThrows private static void runMigrations(JdbcDatabaseContainer<?> container) {
         Database database = DatabaseFactory.getInstance()
             .findCorrectDatabaseImplementation(new JdbcConnection(container.createConnection("")));
+        Path projectRoot = new File(".").toPath()
+            .toAbsolutePath()
+            .getParent()
+            .getParent()
+            .resolve("migrations");
+
         Liquibase liquibase =
-            new Liquibase("master.xml",
-                new DirectoryResourceAccessor(new File(".").toPath().toAbsolutePath().getParent().getParent()
-                    .resolve("migrations")),
+            new Liquibase(
+                "master.xml",
+                new DirectoryResourceAccessor(projectRoot),
                 database
             );
         updateCommand(liquibase).execute();
