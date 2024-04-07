@@ -1,4 +1,4 @@
-package edu.java.scheduler;
+package edu.java.updates;
 
 import edu.java.client.bot.BotClient;
 import edu.java.client.bot.dto.request.LinkUpdate;
@@ -8,6 +8,7 @@ import edu.java.service.LinkService;
 import edu.java.supplier.InfoSuppliers;
 import edu.java.supplier.api.InfoSupplier;
 import edu.java.supplier.api.LinkInfo;
+import edu.java.updates.sender.LinkUpdateSender;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @Component
 @RequiredArgsConstructor
-public class LinkUpdaterScheduler {
+public class LinkUpdateScheduler {
 
     private final LinkService linkService;
 
@@ -26,6 +27,8 @@ public class LinkUpdaterScheduler {
     private final InfoSuppliers infoSuppliers;
 
     private final BotClient botClient;
+
+    private final LinkUpdateSender linkUpdateSender;
 
     @Scheduled(fixedDelayString = "#{@'app-edu.java.configuration.ApplicationConfig'.scheduler.interval}")
     public void update() {
@@ -52,7 +55,7 @@ public class LinkUpdaterScheduler {
                         .map(Chat::chatId)
                         .toList();
                     linkInfo.events().reversed().forEach(
-                        event -> botClient.handleUpdate(new LinkUpdate(
+                        event -> linkUpdateSender.sendUpdate(new LinkUpdate(
                             link.linkId(),
                             link.url(),
                             event.typeEvent(),
