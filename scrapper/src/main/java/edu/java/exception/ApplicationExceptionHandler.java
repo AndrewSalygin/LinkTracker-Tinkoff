@@ -25,7 +25,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         @NotNull HttpStatusCode status,
         @NotNull WebRequest request
     ) {
-        return handleWrongArgumentsRequest(ex, status);
+        return handleIncorrectRequest(ex, status);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         @NotNull HttpStatusCode status,
         @NotNull WebRequest request
     ) {
-        return handleWrongArgumentsRequest(ex, status);
+        return handleIncorrectRequest(ex, status);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         @NotNull HttpStatusCode status,
         @NotNull WebRequest request
     ) {
-        return handleWrongArgumentsRequest(ex, status);
+        return handleIncorrectRequest(ex, status);
     }
 
     @Override
@@ -55,18 +55,23 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         HttpStatusCode status,
         WebRequest request
     ) {
-        return handleWrongArgumentsRequest(ex, status);
+        return handleIncorrectRequest(ex, status);
     }
 
-    private ResponseEntity<Object> handleWrongArgumentsRequest(Exception ex, HttpStatusCode status) {
-        return new ResponseEntity<>(new ApiErrorResponse(
-            "Request with wrong arguments",
-            String.valueOf(status.value()),
-            ex.getClass().getName(),
-            ex.getMessage(),
-            Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
-        ),
-            status);
+    private ResponseEntity<Object> handleIncorrectRequest(
+        Exception ex,
+        HttpStatusCode status
+    ) {
+        return new ResponseEntity<>(
+            new ApiErrorResponse(
+                "Request with wrong arguments",
+                String.valueOf(status.value()),
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                Arrays.stream(ex.getStackTrace()).map(StackTraceElement::toString).toList()
+            ),
+            status
+        );
     }
 
     @ExceptionHandler(ScrapperException.class)

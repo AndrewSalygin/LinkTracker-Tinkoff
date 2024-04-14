@@ -3,6 +3,7 @@ package edu.java.bot.model;
 import com.pengrad.telegrambot.TelegramBot;
 import edu.java.bot.processors.UserMessageProcessor;
 import edu.java.bot.wrapper.TelegramService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -13,7 +14,8 @@ public class NotifyBotTest {
     public void startTest() {
         TelegramBot bot = Mockito.mock(TelegramBot.class);
         UserMessageProcessor processor = Mockito.mock(UserMessageProcessor.class);
-        TelegramService service = new TelegramService(bot, processor);
+        MeterRegistry meterRegistry = Mockito.mock(MeterRegistry.class);
+        TelegramService service = new TelegramService(bot, processor, meterRegistry);
         NotifyBot notifyBot = new NotifyBot(service);
         notifyBot.start();
         Mockito.verify(bot, Mockito.times(1)).setUpdatesListener(Mockito.eq(notifyBot));
@@ -23,7 +25,8 @@ public class NotifyBotTest {
     public void closeTest() {
         TelegramBot bot = Mockito.mock(TelegramBot.class);
         UserMessageProcessor processor = Mockito.mock(UserMessageProcessor.class);
-        TelegramService service = new TelegramService(bot, processor);
+        MeterRegistry meterRegistry = Mockito.mock(MeterRegistry.class);
+        TelegramService service = new TelegramService(bot, processor, meterRegistry);
         NotifyBot notifyBot = new NotifyBot(service);
         notifyBot.start();
         notifyBot.close();
