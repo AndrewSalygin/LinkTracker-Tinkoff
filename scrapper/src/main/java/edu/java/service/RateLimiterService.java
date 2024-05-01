@@ -1,15 +1,15 @@
 package edu.java.service;
 
-import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RateLimiterService {
 
-    private final List<String> whitelist;
+    private final Set<String> whitelist;
 
-    public RateLimiterService(@Value("${rate-limiter.whitelist}") List<String> whitelist) {
+    public RateLimiterService(@Value("${rate-limiter.whitelist}") Set<String> whitelist) {
         this.whitelist = whitelist;
     }
 
