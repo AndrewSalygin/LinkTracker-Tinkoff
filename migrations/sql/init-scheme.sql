@@ -3,7 +3,7 @@
 --changeset andrewsalygin:andrewsalygin_1
 create table if not exists chat
 (
-    chat_id          bigint not null primary key
+    chat_id         bigint not null primary key
 );
 
 create table if not exists link

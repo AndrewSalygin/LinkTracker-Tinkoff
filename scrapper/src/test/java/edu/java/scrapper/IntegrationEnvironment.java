@@ -1,5 +1,7 @@
 package edu.java.scrapper;
 
+import java.io.File;
+import java.nio.file.Path;
 import liquibase.Liquibase;
 import liquibase.command.CommandScope;
 import liquibase.command.core.UpdateCommandStep;
@@ -14,8 +16,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import java.io.File;
-import java.nio.file.Path;
 
 @Testcontainers
 public abstract class IntegrationEnvironment {
