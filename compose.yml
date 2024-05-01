@@ -23,8 +23,6 @@ services:
       - --username=postgres
       - --password=postgres
       - update
-    volumes:
-      - ./migrations:/liquibase/changelog
     networks:
       - backend
 

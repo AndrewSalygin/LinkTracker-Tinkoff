@@ -1,6 +1,7 @@
 package edu.java.scrapper;
 
 import java.io.File;
+import java.nio.file.Path;
 import liquibase.Liquibase;
 import liquibase.command.CommandScope;
 import liquibase.command.core.UpdateCommandStep;
@@ -33,10 +34,16 @@ public abstract class IntegrationEnvironment {
     @SneakyThrows private static void runMigrations(JdbcDatabaseContainer<?> container) {
         Database database = DatabaseFactory.getInstance()
             .findCorrectDatabaseImplementation(new JdbcConnection(container.createConnection("")));
+        Path projectRoot = new File(".").toPath()
+            .toAbsolutePath()
+            .getParent()
+            .getParent()
+            .resolve("migrations");
+
         Liquibase liquibase =
-            new Liquibase("master.xml",
-                new DirectoryResourceAccessor(new File(".").toPath().toAbsolutePath().getParent().getParent()
-                    .resolve("migrations")),
+            new Liquibase(
+                "master.xml",
+                new DirectoryResourceAccessor(projectRoot),
                 database
             );
         updateCommand(liquibase).execute();

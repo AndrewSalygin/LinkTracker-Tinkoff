@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset andrewsalygin:1
+--changeset andrewsalygin:andrewsalygin_1
 create table if not exists chat
 (
     chat_id         bigint not null primary key
